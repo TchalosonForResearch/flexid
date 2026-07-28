@@ -1,0 +1,12 @@
+accelerate
+datasets
+joblib
+numpy
+openai
+pandas
+safetensors
+scikit-learn
+scipy
+sentencepiece
+torch
+transformers

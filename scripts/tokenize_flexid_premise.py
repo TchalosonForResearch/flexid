@@ -13,7 +13,7 @@ from typing import Any
 
 
 # ============================================================================
-# CONFIGURATION — CHEMINS RELATIFS AU DOSSIER DU SCRIPT
+# CONFIGURATION â€” CHEMINS RELATIFS AU DOSSIER DU SCRIPT
 # ============================================================================
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -22,7 +22,6 @@ DATA_DIR = PROJECT_ROOT / "data"
 
 INPUT_FILE = DATA_DIR / "flexid_shuffled.jsonl"
 OUTPUT_FILE = DATA_DIR / "flexid_shuffled_tokenized.jsonl"
-WARNINGS_FILE = DATA_DIR / "flexid_shuffled_tokenization_warnings.txt"
 
 ALLOWED_LABELS = {"entailment", "contradiction", "neutral"}
 
@@ -38,8 +37,8 @@ def nfc(value: Any) -> str:
 
 def tokenize_with_offsets(text: str) -> list[dict[str, Any]]:
     """
-    Tokenisation simple et déterministe : chaque séquence non blanche est
-    un token. La ponctuation et les apostrophes restent attachées aux mots.
+    Tokenisation simple et dÃ©terministe : chaque sÃ©quence non blanche est
+    un token. La ponctuation et les apostrophes restent attachÃ©es aux mots.
     """
     return [
         {
@@ -53,7 +52,7 @@ def tokenize_with_offsets(text: str) -> list[dict[str, Any]]:
 
 
 def make_tokenized_premise(tokens: list[dict[str, Any]]) -> str:
-    """Crée une prémisse numérotée, adaptée aux prompts ou à l'annotation."""
+    """CrÃ©e une prÃ©misse numÃ©rotÃ©e, adaptÃ©e aux prompts ou Ã  l'annotation."""
     return "\n".join(
         f"[{token['token_id']}] {token['text']}"
         for token in tokens
@@ -67,7 +66,7 @@ def char_span_to_token_span(
 ) -> tuple[int | None, int | None, list[int]]:
     """
     Convertit [start_char, end_char) en un intervalle de tokens inclusif.
-    Un token est sélectionné dès qu'il chevauche le span caractère.
+    Un token est sÃ©lectionnÃ© dÃ¨s qu'il chevauche le span caractÃ¨re.
     """
     selected_ids = [
         token["token_id"]
@@ -87,7 +86,7 @@ def token_span_text(
     start_token: int | None,
     end_token: int | None,
 ) -> str:
-    """Reconstruit une vue lisible du span tokenisé à des fins de contrôle."""
+    """Reconstruit une vue lisible du span tokenisÃ© Ã  des fins de contrÃ´le."""
     if start_token is None or end_token is None:
         return ""
 
@@ -105,24 +104,24 @@ def validate_character_span(
     end_char: int,
     rationale_text: str,
 ) -> list[str]:
-    """Vérifie les bornes et l'égalité exacte avec rationale_text."""
+    """VÃ©rifie les bornes et l'Ã©galitÃ© exacte avec rationale_text."""
     messages: list[str] = []
 
     if start_char < 0:
         messages.append(
-            f"ERREUR {instance_id}: rationale_start négatif ({start_char})."
+            f"ERREUR {instance_id}: rationale_start nÃ©gatif ({start_char})."
         )
 
     if end_char < start_char:
         messages.append(
-            f"ERREUR {instance_id}: rationale_end ({end_char}) est inférieur "
-            f"à rationale_start ({start_char})."
+            f"ERREUR {instance_id}: rationale_end ({end_char}) est infÃ©rieur "
+            f"Ã  rationale_start ({start_char})."
         )
 
     if end_char > len(premise):
         messages.append(
-            f"ERREUR {instance_id}: rationale_end ({end_char}) dépasse "
-            f"la longueur de la prémisse ({len(premise)})."
+            f"ERREUR {instance_id}: rationale_end ({end_char}) dÃ©passe "
+            f"la longueur de la prÃ©misse ({len(premise)})."
         )
 
     if messages:
@@ -131,7 +130,7 @@ def validate_character_span(
     extracted = premise[start_char:end_char]
     if extracted != rationale_text:
         messages.append(
-            f"ERREUR {instance_id}: désaccord offsets/rationale_text.\n"
+            f"ERREUR {instance_id}: dÃ©saccord offsets/rationale_text.\n"
             f"  offsets   : [{start_char}, {end_char})\n"
             f"  extrait   : {extracted!r}\n"
             f"  rationale : {rationale_text!r}"
@@ -163,15 +162,15 @@ def process_instance(
     rationale_text = nfc(item.get("rationale_text", ""))
 
     if not premise:
-        raise ValueError(f"{instance_id}: prémisse vide.")
+        raise ValueError(f"{instance_id}: prÃ©misse vide.")
 
     if not hypothesis_facts:
-        raise ValueError(f"{instance_id}: hypothèse vide.")
+        raise ValueError(f"{instance_id}: hypothÃ¨se vide.")
 
     if label not in ALLOWED_LABELS:
         raise ValueError(
             f"{instance_id}: label invalide {label!r}. "
-            f"Labels autorisés : {sorted(ALLOWED_LABELS)}."
+            f"Labels autorisÃ©s : {sorted(ALLOWED_LABELS)}."
         )
 
     try:
@@ -179,14 +178,14 @@ def process_instance(
         rationale_end_char = int(item.get("rationale_end", 0))
     except (TypeError, ValueError) as exc:
         raise ValueError(
-            f"{instance_id}: offsets caractères non entiers."
+            f"{instance_id}: offsets caractÃ¨res non entiers."
         ) from exc
 
-    # Les offsets gold sont supposés avoir été établis sur un texte NFC.
+    # Les offsets gold sont supposÃ©s avoir Ã©tÃ© Ã©tablis sur un texte NFC.
     if raw_premise != premise:
         messages.append(
-            f"ERREUR {instance_id}: la prémisse source n'était pas déjà en NFC; "
-            "les offsets caractères doivent être revérifiés."
+            f"ERREUR {instance_id}: la prÃ©misse source n'Ã©tait pas dÃ©jÃ  en NFC; "
+            "les offsets caractÃ¨res doivent Ãªtre revÃ©rifiÃ©s."
         )
 
     tokens = tokenize_with_offsets(premise)
@@ -269,34 +268,19 @@ def process_instance(
 # TRAITEMENT DU DATASET JSONL
 # ============================================================================
 
-def write_report(path: Path, messages: list[str]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    if messages:
-        path.write_text("\n\n".join(messages) + "\n", encoding="utf-8")
-    else:
-        path.write_text(
-            "Aucun warning. Toutes les instances ont été traitées "
-            "correctement.\n",
-            encoding="utf-8",
-        )
-
-
 def process_dataset(
     input_file: Path,
     output_file: Path,
-    warnings_file: Path,
 ) -> int:
     if not input_file.exists():
         raise FileNotFoundError(
-            f"Fichier d'entrée introuvable : {input_file}\n"
-            "Le script doit être placé dans scripts/ et le corpus dans "
+            f"Fichier d'entrÃ©e introuvable : {input_file}\n"
+            "Le script doit Ãªtre placÃ© dans scripts/ et le corpus dans "
             "data/flexid_shuffled.jsonl."
         )
 
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
-    messages: list[str] = []
     seen_ids: set[str] = set()
     label_counts: Counter[str] = Counter()
     total = 0
@@ -316,27 +300,30 @@ def process_dataset(
             try:
                 item = json.loads(line)
             except json.JSONDecodeError as exc:
-                messages.append(
-                    f"ERREUR ligne {line_number}: JSONL invalide : {exc}"
+                print(
+                    f"ERREUR ligne {line_number}: JSONL invalide : {exc}",
+                    file=sys.stderr,
                 )
                 continue
 
             if not isinstance(item, dict):
-                messages.append(
-                    f"ERREUR ligne {line_number}: objet JSON attendu."
+                print(
+                    f"ERREUR ligne {line_number}: objet JSON attendu.",
+                    file=sys.stderr,
                 )
                 continue
 
             try:
-                processed, instance_messages = process_instance(
+                processed, _ = process_instance(
                     item=item,
                     line_number=line_number,
                 )
 
                 instance_id = processed["id"]
                 if instance_id in seen_ids:
-                    messages.append(
-                        f"ERREUR {instance_id}: identifiant dupliqué."
+                    print(
+                        f"ERREUR {instance_id}: identifiant dupliquÃ©.",
+                        file=sys.stderr,
                     )
                     continue
 
@@ -352,42 +339,36 @@ def process_dataset(
                     + "\n"
                 )
                 written += 1
-                messages.extend(instance_messages)
 
             except Exception as exc:
                 instance_id = item.get("id", "ID inconnu")
-                messages.append(
-                    f"ERREUR ligne {line_number} ({instance_id}): {exc}"
+                print(
+                    f"ERREUR ligne {line_number} ({instance_id}): {exc}",
+                    file=sys.stderr,
                 )
 
-    write_report(warnings_file, messages)
-
-    error_count = sum(message.startswith("ERREUR") for message in messages)
-
-    print("Tokenisation FLEXID terminée.")
-    print(f"Projet détecté          : {PROJECT_ROOT}")
-    print(f"Entrée                  : {input_file}")
+    print("Tokenisation FLEXID terminÃ©e.")
+    print(f"Projet dÃ©tectÃ©          : {PROJECT_ROOT}")
+    print(f"EntrÃ©e                  : {input_file}")
     print(f"Sortie                  : {output_file}")
-    print(f"Rapport                 : {warnings_file}")
     print(f"Instances lues          : {total}")
-    print(f"Instances écrites       : {written}")
+    print(f"Instances Ã©crites       : {written}")
     print(f"Identifiants uniques    : {len(seen_ids)}")
     print(
-        "Répartition des labels  : "
+        "RÃ©partition des labels  : "
         f"entailment={label_counts['entailment']}, "
         f"contradiction={label_counts['contradiction']}, "
         f"neutral={label_counts['neutral']}"
     )
-    print(f"Anomalies détectées     : {error_count}")
 
-    if written != total or error_count:
+    if written != total:
         print(
-            "ATTENTION : consulte le rapport avant d'utiliser la sortie.",
+            "ATTENTION : toutes les instances n'ont pas Ã©tÃ© Ã©crites.",
             file=sys.stderr,
         )
         return 1
 
-    print("Validation              : réussie")
+    print("Validation              : rÃ©ussie")
     return 0
 
 
@@ -397,7 +378,6 @@ if __name__ == "__main__":
             process_dataset(
                 input_file=INPUT_FILE,
                 output_file=OUTPUT_FILE,
-                warnings_file=WARNINGS_FILE,
             )
         )
     except Exception as exc:
