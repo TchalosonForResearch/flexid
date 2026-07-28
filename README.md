@@ -49,3 +49,31 @@ outputs. Model repository revisions must also be recorded before the final
 experiments are rerun.
 
 
+## License
+
+The original FLEXID contributions — including fictional or rewritten factual
+scenarios, labels, rationale annotations, dataset-specific metadata, annotation
+guidelines, and documentation — are licensed under the
+[Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/legalcode)
+(CC BY 4.0).
+
+Official statutory provisions, case-law material, and official legal metadata
+incorporated in FLEXID are not relicensed by the dataset authors. Material
+originating from DILA/Légifrance and, where applicable, the Cour de cassation
+or Judilibre remains subject to the
+[Licence Ouverte / Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence)
+and applicable source-specific terms.
+
+See:
+
+- [`LICENSE.md`](LICENSE.md) for the scope of the dataset license;
+- [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for official sources and
+  attribution requirements; and
+- [`ATTRIBUTION.md`](ATTRIBUTION.md) for citation and reuse examples.
+
+The dataset is provided for research and evaluation. It is not legal advice,
+and users should consult current official sources before relying on any legal
+text.
+
+
+
