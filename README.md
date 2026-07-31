@@ -6,7 +6,7 @@ reported in the FLEXID manuscript.
 
 ## Pipeline
 
-0. `annotator_tool.py`
+0. `annotation_tool.py`
    Is used to fill the  fields of each instance with data
 1. `shuffle_flexid_deterministic.py`
    creates the mixed-order corpus used by the downstream preparation scripts.
