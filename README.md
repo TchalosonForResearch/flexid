@@ -43,7 +43,7 @@ reported in the FLEXID manuscript.
 ## Environment
 
 Python 3.10 or later is required. Install the packages listed in
-`requirements.in`, then record the fully resolved environment used for the
+`requirements.txt`, then record the fully resolved environment used for the
 published run (for example with `python -m pip freeze`) alongside the released
 outputs. Model repository revisions must also be recorded before the final
 experiments are rerun.
