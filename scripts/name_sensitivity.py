@@ -1,34 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-FLEXID — audit de sensibilité aux prénoms (name-sensitivity audit)
 
-Usage prévu:
-    Ouvrir ce fichier dans VS Code puis cliquer sur "Run Python File".
-
-Le script:
-1) localise automatiquement le dépôt FLEXID;
-2) charge les splits officiels v3;
-3) réalise un audit descriptif d'association prénom/label sur l'ensemble du corpus;
-4) construit un challenge set CONTREFACTUEL sur le test officiel:
-       même prémisse + mêmes faits + même label gold,
-       seul le prénom d'une personne est remplacé;
-5) utilise uniquement l'inventaire manuel collé dans NAME_INVENTORY_JSON;
-   les substitutions restent dans la même catégorie grammaticale afin d'éviter
-   de modifier les accords français;
-6) exclut automatiquement les cas où le prénom/nom/sexe/identité est lui-même
-   juridiquement pertinent;
-7) évalue les 3 checkpoints mDeBERTa joint (2026/2027/2028), s'ils sont présents;
-8) rapporte flip rate, consistency, variation des probabilités, accuracy des variantes,
-   harmful/beneficial flips, ainsi que des IC bootstrap groupés par cas de base.
-
-IMPORTANT:
-- Cet audit mesure la sensibilité lexicale aux prénoms.
-- Il ne prétend PAS constituer un audit complet de fairness démographique.
-- Aucun fichier source FLEXID n'est modifié.
-- Aucun hyperparamètre n'est choisi à partir des résultats du challenge.
-"""
 
 from __future__ import annotations
 
@@ -88,24 +61,7 @@ EXCLUSION_PATTERNS = (
     "secret de son identité",
 )
 
-# ============================================================================
-# INVENTAIRE MANUEL DES PRÉNOMS — À REMPLIR PAR TOI
-# ============================================================================
-#
-# COLLE ICI la sortie JSON obtenue après inspection du corpus FLEXID.
-# Tu peux coller soit le JSON brut, soit le bloc ```json ... ```.
-#
-# Le script n'ajoute AUCUN prénom et n'essaie PAS de deviner des noms.
-# Les prénoms de "ambiguous_or_uncertain" sont détectés mais JAMAIS utilisés
-# comme cas de base ni comme remplacements.
-#
-# Format attendu EXACT:
-# {
-#   "masculine": [...],
-#   "feminine": [...],
-#   "ambiguous_or_uncertain": [...]
-# }
-#
+
 NAME_INVENTORY_JSON = r"""
 {
   "masculine": [
